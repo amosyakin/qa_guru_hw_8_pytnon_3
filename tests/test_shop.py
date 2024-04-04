@@ -3,7 +3,7 @@
 """
 import pytest
 
-from homework.models import Product
+from models import Product
 
 
 @pytest.fixture
@@ -18,17 +18,27 @@ class TestProducts:
     """
 
     def test_product_check_quantity(self, product):
-        # TODO напишите проверки на метод check_quantity
-        pass
+        assert product.check_quantity(500)
+        assert product.check_quantity(999)
+        assert product.check_quantity(1000)
+        assert not product.check_quantity(1001)
+        assert not product.check_quantity(1500)
 
     def test_product_buy(self, product):
         # TODO напишите проверки на метод buy
-        pass
+        assert product.buy(500)
+        assert product.buy(999)
+        assert product.buy(1000)
 
     def test_product_buy_more_than_available(self, product):
         # TODO напишите проверки на метод buy,
         #  которые ожидают ошибку ValueError при попытке купить больше, чем есть в наличии
-        pass
+        try:
+            product.buy(1001)
+        except ValueError:
+            assert True
+        else:
+            assert False, "Expected ValueError was not raised"
 
 
 class TestCart:
