@@ -14,16 +14,19 @@ class Product:
         self.quantity = quantity
 
     def check_quantity(self, quantity: int) -> bool:
+        """
+        TODO Верните True если количество продукта больше или равно запрашиваемому
+            и False в обратном случае
+        """
         return self.quantity >= quantity
 
-    def buy(self, quantity):
+    def buy(self, quantity: int):
         """
         TODO реализуйте метод покупки
             Проверьте количество продукта используя метод check_quantity
             Если продуктов не хватает, то выбросите исключение ValueError
         """
-        print(self.check_quantity(int(quantity)))
-        if self.check_quantity(int(quantity)):
+        if self.check_quantity(quantity):
             return True
         else:
             raise ValueError("There are not enough products")
