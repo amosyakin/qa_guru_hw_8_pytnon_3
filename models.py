@@ -53,8 +53,10 @@ class Cart:
         Метод добавления продукта в корзину.
         Если продукт уже есть в корзине, то увеличиваем количество
         """
-
-        raise NotImplementedError
+        if product in self.products:
+            self.products[product] += buy_count
+        else:
+            self.products[product] = buy_count
 
     def remove_product(self, product: Product, remove_count=None):
         """
@@ -62,18 +64,30 @@ class Cart:
         Если remove_count не передан, то удаляется вся позиция
         Если remove_count больше, чем количество продуктов в позиции, то удаляется вся позиция
         """
-        raise NotImplementedError
+        if remove_count is None:
+            del self.products[product]
+        elif remove_count > self.products[product]:
+            del self.products[product]
+        else:
+            self.products[product] -= remove_count
 
     def clear(self):
-        raise NotImplementedError
+        self.products.clear()
 
-    def get_total_price(self) -> float:
-        raise NotImplementedError
+    def get_total_price(self, product: Product) -> float:
+        total_price = 0
+        for merch in list(self.products):
+            total_price += product.price * self.products[merch]
+        return total_price
 
-    def buy(self):
+    def buy(self, product: Product):
         """
         Метод покупки.
         Учтите, что товаров может не хватать на складе.
         В этом случае нужно выбросить исключение ValueError
         """
-        raise NotImplementedError
+        for merch in list(self.products):
+            if product.check_quantity(self.products[merch]):
+                return True
+            else:
+                raise ValueError("There are not enough products")
