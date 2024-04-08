@@ -31,19 +31,16 @@ class TestProducts:
 
     def test_product_buy(self, product):
         # TODO напишите проверки на метод buy
-        assert product.buy(500)
-        assert product.buy(999)
-        assert product.buy(1000)
+        initial_quantity = product.quantity
+        product.buy(500)
+        expected_quantity = product.quantity
+        assert expected_quantity == initial_quantity - 500
 
     def test_product_buy_more_than_available(self, product):
         # TODO напишите проверки на метод buy,
         #  которые ожидают ошибку ValueError при попытке купить больше, чем есть в наличии
-        try:
+        with pytest.raises(ValueError):
             product.buy(1001)
-        except ValueError:
-            assert True
-        else:
-            assert False, "Expected ValueError was not raised"
 
 
 class TestCart:
@@ -84,12 +81,21 @@ class TestCart:
         cart.remove_product(product, remove_count=50)
         assert not cart.products
 
+    def test_remove_product_eql_add(self, product, cart):
+        # Добавить продукт в корзину
+        cart.add_product(product, buy_count=5)
+        assert cart.products[product] == 5
+
+        # Удалить все продукты из корзины
+        cart.remove_product(product, remove_count=5)
+        assert not cart.products
+
     def test_clear(self, product, cart):
         # Добавить продукт в корзину
         cart.add_product(product, buy_count=5)
         assert cart.products[product] == 5
 
-        # Очищаем коризну
+        # Очищаем корзину
         cart.clear()
         assert not cart.products
 
@@ -108,16 +114,13 @@ class TestCart:
         assert cart.products[product] == 5
 
         # Покупаем товары
-        assert cart.buy(product)
+        initial_quantity = product.quantity
+        cart.buy(product)
+        expected_quantity = product.quantity
+        assert expected_quantity == initial_quantity - 5
 
     def test_buy_more_than_available(self, product, cart):
         # Добавить продукт в корзину
         cart.add_product(product, buy_count=1001)
-        assert cart.products[product] == 1001
-
-        try:
+        with pytest.raises(ValueError):
             cart.buy(product)
-        except ValueError:
-            assert True
-        else:
-            assert False, "Expected ValueError was not raised"

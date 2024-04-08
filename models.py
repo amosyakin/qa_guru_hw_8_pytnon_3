@@ -27,7 +27,7 @@ class Product:
             Если продуктов не хватает, то выбросите исключение ValueError
         """
         if self.check_quantity(quantity):
-            return True
+            self.quantity -= quantity
         else:
             raise ValueError("There are not enough products")
 
@@ -66,7 +66,7 @@ class Cart:
         """
         if remove_count is None:
             del self.products[product]
-        elif remove_count > self.products[product]:
+        elif remove_count >= self.products[product]:
             del self.products[product]
         else:
             self.products[product] -= remove_count
@@ -86,8 +86,6 @@ class Cart:
         Учтите, что товаров может не хватать на складе.
         В этом случае нужно выбросить исключение ValueError
         """
-        for merch in list(self.products):
-            if product.check_quantity(self.products[merch]):
-                return True
-            else:
-                raise ValueError("There are not enough products")
+        for product, quantity in self.products.items():
+            product.buy(quantity)
+        self.clear()
